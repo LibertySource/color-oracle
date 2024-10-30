@@ -7,11 +7,6 @@
 
 Color Oracle is an innovative application that harnesses the power of AWS Bedrock's Prompt flow to answer the seemingly simple yet intriguing question: "What color is this object?" This project demonstrates the fascinating intersection of artificial intelligence and color perception.
 
-## 🛠️ Built With
-
-- [Deno](https://deno.land/) - A modern runtime for JavaScript and TypeScript
-- [AWS Bedrock](https://aws.amazon.com/bedrock/) - A fully managed service for building AI applications with foundation models
-
 ## 🏁 Getting Started
 
 ### Prerequisites
@@ -34,13 +29,13 @@ Color Oracle is an innovative application that harnesses the power of AWS Bedroc
 
 3. Set up your AWS credentials (refer to AWS documentation)
 
-4. Create an AWS Prompt similiar to the following
+4. Create an AWS Bedrock Prompt similiar to the following
 
 ```txt
 You will be provided the name of an object. Your task is to simply state what color that object is. Do not give any explanation, simply state one single color that best desribes the image. The object is {{object}}
 ```
 
-5. Create AWS Prompt Flow to use above prompt
+5. Create AWS Bedrock Prompt Flow to use above prompt
 
 ![AWS Prompt Flow](images/prompt_flow.png)
 
@@ -80,7 +75,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 Jeff Holst - jeff@libertysource.com  
 
-Project Link: [https://github.com/LibertySource/color-oracle](https://github.com/yourusername/color-oracle)
+Project Link: [https://github.com/LibertySource/color-oracle](https://github.com/LibertySource/color-oracle)
 
 ## 🙏 Acknowledgments
 
