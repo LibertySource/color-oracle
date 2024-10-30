@@ -1,0 +1,8 @@
+{
+  "imports": {
+    "@aws-sdk/client-bedrock-agent-runtime": "npm:@aws-sdk/client-bedrock-agent-runtime"
+  },
+  "tasks": {
+    "start": "clear; deno run --env --allow-env --allow-read --allow-sys --allow-net index.ts"
+  }
+}
