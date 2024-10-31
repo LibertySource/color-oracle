@@ -1,9 +1,11 @@
-// index.ts
+// deno-lint-ignore-file no-explicit-any
 
 import {
     BedrockAgentRuntimeClient,
     InvokeFlowCommand,
 } from "@aws-sdk/client-bedrock-agent-runtime";
+
+const debug: boolean = Deno.env.get("DEBUG")?.toLowerCase() === "true";
 
 // Configure the AWS client
 const client = new BedrockAgentRuntimeClient({
@@ -15,8 +17,8 @@ const client = new BedrockAgentRuntimeClient({
 });
 
 async function invokeFlow(
-    flowIdentifier: string,
-    flowAliasIdentifier: string,
+    flowIdentifier: string | undefined,
+    flowAliasIdentifier: string | undefined,
     inputs: any[],
 ) {
     const command = new InvokeFlowCommand({
@@ -26,7 +28,7 @@ async function invokeFlow(
     });
 
     try {
-        let flowResponse = {};
+        let flowResponse: any = {};
         const response = await client.send(command);
 
         if (response && response.responseStream) {
@@ -35,16 +37,21 @@ async function invokeFlow(
 
                 if (flowOutputEvent) {
                     flowResponse = { ...flowResponse, ...flowOutputEvent };
-                    
-                    console.log();
+
                     console.log(
-                        `Answer: ${flowResponse.content.document}`,
+                        `\nAnswer: ${flowResponse?.content?.document}\n`,
                     );
-                    console.log();
                 } else if (flowCompletionEvent) {
-                    // uncomment for debug info
-                    // flowResponse = { ...flowResponse, ...flowCompletionEvent };
-                    // console.log("Flow completion event:", flowCompletionEvent);
+                    if (debug) {
+                        flowResponse = {
+                            ...flowResponse,
+                            ...flowCompletionEvent,
+                        };
+                        console.log(
+                            "Flow completion event:",
+                            flowCompletionEvent,
+                        );
+                    }
                 }
             }
         }
@@ -56,10 +63,11 @@ async function invokeFlow(
 }
 
 // Example usage
-const flowIdentifier = Deno.env.get("AWS_BEDROCK_FLOW_IDENTIFIER");
-const flowAliasIdentifier = Deno.env.get("AWS_BEDROCK_FLOW_ALIAS_IDENTIFIER");
+const flowIdentifier: string | undefined = Deno.env.get("AWS_BEDROCK_FLOW_IDENTIFIER");
+const flowAliasIdentifier: string | undefined = Deno.env.get("AWS_BEDROCK_FLOW_ALIAS_IDENTIFIER");
 
-console.log("Name any object and I'll tell you its color.");
+console.log("Welcome to the 🌈 Color Oracle")
+console.log("Name anything and I'll tell you its color.");
 const input = prompt(": ");
 
 const inputs = [
