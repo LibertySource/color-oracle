@@ -1,6 +1,14 @@
 // deno-lint-ignore-file no-explicit-any
 
 import {
+    bold,
+    gray,
+    italic,
+    magenta,
+    white,
+} from "https://deno.land/std@0.224.0/fmt/colors.ts";
+
+import {
     BedrockAgentRuntimeClient,
     InvokeFlowCommand,
 } from "@aws-sdk/client-bedrock-agent-runtime";
@@ -41,16 +49,25 @@ async function invokeFlow(
                     flowResponse = { ...flowResponse, ...flowOutputEvent };
 
                     console.log(
-                        `\nAnswer: ${flowResponse?.content?.document}\n`,
+                        `\n${gray("Answer")}: ${
+                            bold(white(flowResponse?.content?.document))
+                        }\n`,
                     );
 
                     if (debug) {
                         console.log(
-                            `Flow execution time: ${((endTime - startTime) / 1000).toFixed(3)} secs`
+                            magenta(
+                                `Flow execution time: ${
+                                    ((endTime - startTime) / 1000).toFixed(3)
+                                } secs`,
+                            ),
                         );
                     }
                 } else if (flowCompletionEvent) {
-                    if (debug && flowCompletionEvent.completionReason != "SUCCESS") {
+                    if (
+                        debug &&
+                        flowCompletionEvent.completionReason != "SUCCESS"
+                    ) {
                         flowResponse = {
                             ...flowResponse,
                             ...flowCompletionEvent,
@@ -79,15 +96,20 @@ const flowAliasIdentifier: string | undefined = Deno.env.get(
 );
 
 console.log("Welcome to the 🌈 Color Oracle");
-console.log("Name anything and I'll tell you its color.");
-const input = prompt(": ");
 
-const inputs = [
-    {
-        content: { document: `${input}` },
-        nodeName: "FlowInputNode",
-        nodeOutputName: "document",
-    },
-];
+let counter: number = 1;
 
-invokeFlow(flowIdentifier, flowAliasIdentifier, inputs);
+while (true) {
+    console.log(italic("\nName anything and I'll tell you its color."));
+    const input = prompt(magenta(`${counter++}: `));
+
+    const inputs = [
+        {
+            content: { document: `${input}` },
+            nodeName: "FlowInputNode",
+            nodeOutputName: "document",
+        },
+    ];
+
+    await invokeFlow(flowIdentifier, flowAliasIdentifier, inputs);
+}
