@@ -27,9 +27,11 @@ async function invokeFlow(
         inputs,
     });
 
+    const startTime = Date.now();
     try {
         let flowResponse: any = {};
         const response = await client.send(command);
+        const endTime = Date.now();
 
         if (response && response.responseStream) {
             for await (const chunkEvent of response.responseStream) {
@@ -41,8 +43,14 @@ async function invokeFlow(
                     console.log(
                         `\nAnswer: ${flowResponse?.content?.document}\n`,
                     );
-                } else if (flowCompletionEvent) {
+
                     if (debug) {
+                        console.log(
+                            `Flow execution time: ${((endTime - startTime) / 1000).toFixed(3)} secs`
+                        );
+                    }
+                } else if (flowCompletionEvent) {
+                    if (debug && flowCompletionEvent.completionReason != "SUCCESS") {
                         flowResponse = {
                             ...flowResponse,
                             ...flowCompletionEvent,
@@ -63,10 +71,14 @@ async function invokeFlow(
 }
 
 // Example usage
-const flowIdentifier: string | undefined = Deno.env.get("AWS_BEDROCK_FLOW_IDENTIFIER");
-const flowAliasIdentifier: string | undefined = Deno.env.get("AWS_BEDROCK_FLOW_ALIAS_IDENTIFIER");
+const flowIdentifier: string | undefined = Deno.env.get(
+    "AWS_BEDROCK_FLOW_IDENTIFIER",
+);
+const flowAliasIdentifier: string | undefined = Deno.env.get(
+    "AWS_BEDROCK_FLOW_ALIAS_IDENTIFIER",
+);
 
-console.log("Welcome to the 🌈 Color Oracle")
+console.log("Welcome to the 🌈 Color Oracle");
 console.log("Name anything and I'll tell you its color.");
 const input = prompt(": ");
 
